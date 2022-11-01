@@ -26,7 +26,7 @@ def signup():
             Users.id
         ).filter_by(
             username=username
-        ).first() is not None
+        ).scalar() is not None
 
         if len(username) < 4:
             flash(

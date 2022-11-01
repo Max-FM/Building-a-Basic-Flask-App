@@ -2,8 +2,7 @@
 
 {% block title %}Task Master{% endblock %}
 
-{% block body %}
-<div class="content">
+{% block content %}
     <h1 style="text-align: center">Task Master</h1>
     {% if tasks|length < 1 %}
     <h4 style="text-align: center">There are no tasks. Create one below!</h4>
@@ -32,5 +31,4 @@
         <input type="text" name="content" id="content">
         <input type="submit" value="Add Task">
     </form>
-</div>
 {% endblock %}

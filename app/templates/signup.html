@@ -1,6 +1,6 @@
 {% extends 'base.html' %}
 
-{% block title %}Sign up{% endblock %}
+{% block title %}Sign Up{% endblock %}
 
 {% block content %}
 <form method="POST">
@@ -24,7 +24,15 @@
             id="password"
             placeholder="Enter Password">
     </div>
-
-    <input type="submit" value="Submit">
+    <div class="form-group">
+        <label for="password_confirm">Confirm Password</label>
+        <input
+            type="password"
+            class="form-control"
+            name="password_confirm"
+            id="password_confirm"
+            placeholder="Confirm Password">
+    </div>
+    <button type="submit" class="btn btn-primary">Submit</button>
 </form>
 {% endblock %}

@@ -23,6 +23,8 @@ def index():
             db.session.add(new_task)
             db.session.commit()
 
+            flash("Task created successfully!", category="success")
+
         return redirect(url_for("views.index"))
 
     else:
@@ -42,6 +44,8 @@ def delete(id):
     db.session.delete(task_to_delete)
     db.session.commit()
 
+    flash("Task deleted successfully!", category="success")
+
     return redirect(url_for("views.index"))
 
 
@@ -53,6 +57,8 @@ def update(id):
         task_to_update.content = request.form['content']
 
         db.session.commit()
+
+        flash("Task updated successfully!", category="success")
 
         return redirect(url_for("views.index"))
 

@@ -1,7 +1,7 @@
 from . import db
 from .models import User
 from flask import Blueprint, render_template, redirect, request, flash
-
+from werkzeug.security import generate_password_hash
 
 auth = Blueprint("auth", __name__)
 
@@ -53,7 +53,13 @@ def signup():
                 "Account created!",
                 category="success"
             )
-            new_user = User(username=username, password=password)
+            new_user = User(
+                username=username,
+                password=generate_password_hash(
+                    password,
+                    method='sha256'
+                ),
+            )
             db.session.add(new_user)
             db.session.commit()
 

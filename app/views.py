@@ -1,12 +1,13 @@
 from . import db
 from .models import Task
 from flask import Blueprint, render_template, request, redirect
-
+from flask_login import login_required
 
 views = Blueprint("views", __name__)
 
 
 @views.route("/", methods=['GET', 'POST'])
+@login_required
 def index():
     if request.method == 'POST':
         task_content = request.form['content']

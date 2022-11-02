@@ -1,33 +1,60 @@
 from . import db
 from .models import User
-from flask import Blueprint, render_template, redirect, request, flash
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, render_template, redirect, request, flash, url_for
+from werkzeug.security import generate_password_hash, check_password_hash
+from flask_login import login_user, login_required, logout_user
 
 auth = Blueprint("auth", __name__)
 
 
-@auth.route("/login", methods=['GET', 'POST'])
+@auth.route("/login", methods=["GET", "POST"])
 def login():
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        user = User.query.filter_by(
+            username=username
+        ).scalar()
+
+        if user:
+            if check_password_hash(user.password, password):
+                flash("Login successful!", category="success")
+                login_user(user, remember=True)
+                return redirect(url_for("views.index"))
+            else:
+                flash(
+                    "Incorrect username or password! Please try again.",
+                    category="error"
+                )
+        else:
+            flash(
+                "Incorrect username or password! Please try again.",
+                category="error"
+            )
+
     return render_template("login.html")
 
 
 @auth.route("/logout")
+@login_required
 def logout():
-    return redirect("/")
+    logout_user()
+    return redirect(url_for("auth.login"))
 
 
-@auth.route("/signup", methods=['GET', 'POST'])
+@auth.route("/signup", methods=["GET", "POST"])
 def signup():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
         password_confirm = request.form.get("password_confirm")
 
-        user_exists = User.query.filter_by(
+        user = User.query.filter_by(
             username=username
-        ).scalar() is not None
+        ).first()
 
-        if user_exists:
+        if user:
             flash(
                 "Username already exists!",
                 category="error"
@@ -49,20 +76,20 @@ def signup():
                 category="error"
             )
         else:
-            flash(
-                "Account created!",
-                category="success"
-            )
             new_user = User(
                 username=username,
                 password=generate_password_hash(
                     password,
-                    method='sha256'
+                    method="sha256"
                 ),
             )
             db.session.add(new_user)
             db.session.commit()
-
-            return redirect("/")
+            flash(
+                "Account created!",
+                category="success"
+            )
+            login_user(user, remember=True)
+            return redirect(url_for("views.index"))
 
     return render_template("signup.html")

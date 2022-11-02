@@ -21,7 +21,7 @@ def create_app():
     app.register_blueprint(views, url_prefix='/')
     app.register_blueprint(auth, url_prefix='/')
 
-    from .models import Users, Tasks  # noqa: F401
+    from .models import User, Task  # noqa: F401
     create_database(app)
 
     return app

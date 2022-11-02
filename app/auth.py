@@ -1,6 +1,7 @@
-from flask import Blueprint, render_template, redirect, request, flash
 from . import db
-from .models import Users
+from .models import User
+from flask import Blueprint, render_template, redirect, request, flash
+
 
 auth = Blueprint("auth", __name__)
 
@@ -22,7 +23,7 @@ def signup():
         password = request.form.get("password")
         password_confirm = request.form.get("password_confirm")
 
-        user_exists = Users.query.filter_by(
+        user_exists = User.query.filter_by(
             username=username
         ).scalar() is not None
 
@@ -52,7 +53,7 @@ def signup():
                 "Account created!",
                 category="success"
             )
-            new_user = Users(username=username, password=password)
+            new_user = User(username=username, password=password)
             db.session.add(new_user)
             db.session.commit()
 

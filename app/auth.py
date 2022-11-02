@@ -22,13 +22,16 @@ def signup():
         password = request.form.get("password")
         password_confirm = request.form.get("password_confirm")
 
-        exists = db.session.query(
-            Users.id
-        ).filter_by(
+        user_exists = Users.query.filter_by(
             username=username
         ).scalar() is not None
 
-        if len(username) < 4:
+        if user_exists:
+            flash(
+                "Username already exists!",
+                category="error"
+            )
+        elif len(username) < 4:
             flash(
                 "Username must be at least 4 characters long!",
                 category="error"
@@ -38,11 +41,7 @@ def signup():
                 "Password must be at least 4 characters long!",
                 category="error"
             )
-        elif exists:
-            flash(
-                "Username already exists!",
-                category="error"
-            )
+
         elif password != password_confirm:
             flash(
                 "Passwords do not match!",

@@ -1,7 +1,7 @@
 from . import db
 from .models import Task
 from flask import Blueprint, render_template, request, redirect
-from flask_login import login_required
+from flask_login import login_required, current_user
 
 views = Blueprint("views", __name__)
 
@@ -11,15 +11,20 @@ views = Blueprint("views", __name__)
 def index():
     if request.method == 'POST':
         task_content = request.form['content']
-        new_task = Task(content=task_content)
+        new_task = Task(content=task_content, user_id=current_user.id)
 
         db.session.add(new_task)
         db.session.commit()
         return redirect("/")
 
     else:
-        tasks = Task.query.order_by(Task.date_created).all()
-        return render_template("index.html", tasks=tasks)
+        tasks = Task.query.filter_by(
+            user_id=current_user.id
+        ).order_by(
+            Task.date_created
+        ).all()
+
+        return render_template("index.html", tasks=tasks, user=current_user)
 
 
 @views.route("/delete/<int:id>")
@@ -28,6 +33,7 @@ def delete(id):
 
     db.session.delete(task_to_delete)
     db.session.commit()
+
     return redirect("/")
 
 
@@ -39,7 +45,12 @@ def update(id):
         task_to_update.content = request.form['content']
 
         db.session.commit()
+
         return redirect("/")
 
     else:
-        return render_template("update.html", task=task_to_update)
+        return render_template(
+            "update.html",
+            task=task_to_update,
+            user=current_user
+        )

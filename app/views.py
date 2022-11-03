@@ -38,6 +38,7 @@ def index():
 
 
 @views.route("/delete/<int:id>")
+@login_required
 def delete(id):
     task_to_delete = Task.query.get_or_404(id)
 
@@ -45,21 +46,21 @@ def delete(id):
         db.session.delete(task_to_delete)
         db.session.commit()
         flash("Task deleted successfully!", category="success")
-    else:
-        flash("Cannot delete task without authorization!", category="error")
 
     return redirect(url_for("views.index"))
 
 
 @views.route("/update/<int:id>", methods=['GET', 'POST'])
+@login_required
 def update(id):
     task_to_update = Task.query.get_or_404(id)
 
+    if task_to_update.user_id != current_user.id:
+        return redirect(url_for("views.index"))
+
     if request.method == 'POST':
         task_to_update.content = request.form['content']
-
         db.session.commit()
-
         flash("Task updated successfully!", category="success")
 
         return redirect(url_for("views.index"))

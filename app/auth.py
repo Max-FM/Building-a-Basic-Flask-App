@@ -69,7 +69,6 @@ def signup():
                 "Password must be at least 4 characters long!",
                 category="error"
             )
-
         elif password != password_confirm:
             flash(
                 "Passwords do not match!",

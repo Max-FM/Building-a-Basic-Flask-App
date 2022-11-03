@@ -1,12 +1,12 @@
 from . import db
 from flask_login import UserMixin
-from sqlalchemy.sql import func
+from datetime import datetime
 
 
 class Task(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     content = db.Column(db.String(256), nullable=False)
-    date_created = db.Column(db.DateTime(timezone=True), default=func.now())
+    date_created = db.Column(db.DateTime, default=datetime.now())
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
 
     def __repr__(self):

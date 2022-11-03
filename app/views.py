@@ -41,10 +41,12 @@ def index():
 def delete(id):
     task_to_delete = Task.query.get_or_404(id)
 
-    db.session.delete(task_to_delete)
-    db.session.commit()
-
-    flash("Task deleted successfully!", category="success")
+    if task_to_delete.user_id == current_user.id:
+        db.session.delete(task_to_delete)
+        db.session.commit()
+        flash("Task deleted successfully!", category="success")
+    else:
+        flash("Cannot delete task without authorization!", category="error")
 
     return redirect(url_for("views.index"))
 
